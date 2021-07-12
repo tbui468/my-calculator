@@ -18,6 +18,7 @@ class Parser {
     Parser(std::vector<Token> tokens);
     Token previous();
     double compute(std::shared_ptr<Expr> root);
+    std::shared_ptr<Expr> expression();
     std::shared_ptr<Expr> term(std::shared_ptr<Expr> left);
     std::shared_ptr<Expr> term();
     std::shared_ptr<Expr> factor();

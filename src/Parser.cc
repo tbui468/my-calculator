@@ -30,7 +30,20 @@ namespace myc {
     }
   }
 
-  std::shared_ptr<Expr> Parser::term(std::shared_ptr<Expr> left) {
+  //if RIGHT_PAREN OR has_tokens()???
+  std::shared_ptr<Expr> Parser::expression() {
+    std::shared_ptr<Expr> left = term();
+    if (match(TokenType::RIGHT_PAREN)) {
+      return left;
+    }
+    while(has_tokens()) {
+      left = term(left);
+    }
+    return left;
+  }
+
+  std::shared_ptr<Expr> Parser::term() {
+    std::shared_ptr<Expr> left = factor();
     if (match(TokenType::PLUS) || match(TokenType::MINUS)) {
       Token token = previous();
       std::shared_ptr<Expr> right = factor();
@@ -40,9 +53,14 @@ namespace myc {
     }
   }
 
-  std::shared_ptr<Expr> Parser::term() {
-    std::shared_ptr<Expr> left = factor();
-    return term(left);
+  std::shared_ptr<Expr> Parser::term(std::shared_ptr<Expr> left) { //I don't like having this function here - can this be combined with term()?
+    if (match(TokenType::PLUS) || match(TokenType::MINUS)) {
+      Token token = previous();
+      std::shared_ptr<Expr> right = factor();
+      return std::make_shared<Binary>(token, left, right);
+    }else{
+      return left;
+    }
   }
 
   std::shared_ptr<Expr> Parser::factor() {
@@ -59,9 +77,8 @@ namespace myc {
   std::shared_ptr<Expr> Parser::primary() {
     if (match(TokenType::NUMBER)) {
       return std::make_shared<Literal>(previous());
-      /*
-         } else if (match(TokenType::LEFT_PAREN) || match(TokenType::RIGHT_PAREN)) {
-         return std::make_shared<Literal>(previous());*/
+    } else if (match(TokenType::LEFT_PAREN)) {
+      return expression();
     }else{
       std::cout << "Invalid syntax" << std::endl;
     }

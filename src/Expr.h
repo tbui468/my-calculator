@@ -45,6 +45,32 @@ class Binary: public Expr {
   public:
 };
 
+//What is a token?  A token has a type, and an optional double (since we are using numbers only)
+//The parser takes in a sequence of tokens and outputs the root of the abstract symbolic tree
+//How is this AST constructed?  They are made by using expression rules governed by terminal and non-terminal expression
+//each nonterminal Expression must have a rule associated with it.
+//
+//For a recursive descent parser, we order the expressions by precedence and recursively call from lowest to highest precedence
+//What is an expression?  Why do we need it?  Why not just use the tokens we have already?
+//What data should it contain and what functions?
+//issue: a group doesn't need a token, it's just an single expression
+//Literal, Binary and Group all are different - how can I make the superclass (Expr) fit them better?
+//  remove Token data member and make left/right into a list of expressions?
+//  TokenType operator, std::string literal (optional), std::vector<std::shared_ptr<Expr> exprs
+//    Literal has 0 exprs, Group has 1 exprs, Binary has 2 exprs
+//    TokenType???
+//    std::string value
+/*
+class Group: public Expr {
+  public:
+    Group(std::shared_ptr<Expr> left): Expr(token, left, right) {}
+    ~Binary() {}
+    std::string accept(AbstractDispatcher& dispatcher) override {
+      return dispatcher.dispatch(*this);
+    }
+  public:
+}*/
+
 }
 
 #endif EXPR_H

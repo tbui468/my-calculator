@@ -61,10 +61,7 @@ int main(int argc, char** argv) {
     scanner.print_tokens();
 
     myc::Parser parser = myc::Parser(scanner.get_tokens());
-    std::shared_ptr<myc::Expr> out = parser.term();
-    while(parser.has_tokens()) {
-      out = parser.term(out);
-    }
+    std::shared_ptr<myc::Expr> out = parser.expression();
     //use visitor pattern to print out expressions recursively
     myc::PrinterDispatcher dispatcher;
     std::cout << out->accept(dispatcher) << std::endl;
