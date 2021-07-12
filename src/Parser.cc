@@ -30,13 +30,12 @@ namespace myc {
     }
   }
 
-  //if RIGHT_PAREN OR has_tokens()???
   std::shared_ptr<Expr> Parser::expression() {
     std::shared_ptr<Expr> left = term();
-    if (match(TokenType::RIGHT_PAREN)) {
-      return left;
-    }
     while(has_tokens()) {
+      if (match(TokenType::RIGHT_PAREN)) {
+        return left;
+      }
       left = term(left);
     }
     return left;

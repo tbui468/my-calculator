@@ -10,8 +10,9 @@
 #include "Parser.h"
 
 //TODO:
-//  allow parentheses - this goes at highest precedence
+//  Write tests to make sure it all works when I need to refactor/add new features
 //  add unary operators (allow putting negative in front)
+//  Parser has both term(left) and term().  Can this be simplified further?
 //  can this be done with unique pointers rather than all the shared pointers?
 
 namespace myc {
