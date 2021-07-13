@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+#include "TokenType.h"
 
 namespace myc {
 
@@ -12,6 +13,7 @@ class Group;
 
 class AbstractDispatcher {
   public:
+    virtual ~AbstractDispatcher() {}
     virtual std::string dispatch(Literal& literal) = 0;
     virtual std::string dispatch(Binary& binary) = 0;
 };

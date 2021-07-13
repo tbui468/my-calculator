@@ -10,6 +10,7 @@ namespace myc {
     return m_tokens.at(m_position - 1);
   }
 
+  //split this off to a differnt class to evaluate AST
   double Parser::compute(std::shared_ptr<Expr> root) {
     switch (root->op) {
       case TokenType::PLUS:
@@ -31,44 +32,29 @@ namespace myc {
   }
 
   std::shared_ptr<Expr> Parser::expression() {
-    std::shared_ptr<Expr> left = term();
-    while(has_tokens()) {
-      left = term(left); //is there a different way to solve this problem withou a term(left) function???
-    }
-    return left;
+    return term();
   }
 
   std::shared_ptr<Expr> Parser::term() {
     std::shared_ptr<Expr> left = factor();
-    if (match(TokenType::PLUS) || match(TokenType::MINUS)) {
+    while (match(TokenType::PLUS) || match(TokenType::MINUS)) {
       Token token = previous();
       std::shared_ptr<Expr> right = factor();
-      return std::make_shared<Binary>(token.m_type, left, right);
-    }else{
-      return left;
+      left = std::make_shared<Binary>(token.m_type, left, right);
     }
-  }
 
-  //this function is causing a lot of problems dispite solving one
-  std::shared_ptr<Expr> Parser::term(std::shared_ptr<Expr> left) { //I don't like having this function here - can this be combined with term()?
-    if (match(TokenType::PLUS) || match(TokenType::MINUS)) {
-      Token token = previous();
-      std::shared_ptr<Expr> right = factor();
-      return std::make_shared<Binary>(token.m_type, left, right);
-    }else{
-      return left; //this needs to call factor() otherwise 1*2*3 will skip the last number!!!
-    }
+    return left;
   }
 
   std::shared_ptr<Expr> Parser::factor() {
     std::shared_ptr<Expr> left = primary();
-    if (match(TokenType::MULTIPLY) || match(TokenType::DIVIDE)) {
+    while (match(TokenType::MULTIPLY) || match(TokenType::DIVIDE)) {
       Token token = previous();
       std::shared_ptr<Expr> right = primary();
-      return std::make_shared<Binary>(token.m_type, left, right); 
-    }else{
-      return left;
+      left = std::make_shared<Binary>(token.m_type, left, right); 
     }
+
+    return left;
   }
 
   std::shared_ptr<Expr> Parser::primary() {

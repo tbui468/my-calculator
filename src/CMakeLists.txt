@@ -3,6 +3,7 @@ set(Sources
     Scanner.cc
     Token.cc
     Parser.cc
+    Evaluator.cc
     )
 
 set(Headers
@@ -11,6 +12,7 @@ set(Headers
     TokenType.h
     Parser.h
     Expr.h
+    Evaluator.h
     )
 
 add_executable(
