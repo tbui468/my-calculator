@@ -11,9 +11,7 @@
 #include "Evaluator.h"
 
 //TODO:
-//  add unary operators (allow putting negative in front).  Allow double or more negatives where an even number of negatives will cancel
 //  Write tests to make sure it all works when I need to refactor/add new features
-//  Parser has both term(left) and term().  Can this be simplified further?
 //  can this be done with unique pointers rather than all the shared pointers?
 
 

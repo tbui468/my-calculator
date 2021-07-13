@@ -13,6 +13,9 @@ namespace myc {
       std::string dispatch(Literal& literal) override {
         return std::to_string(literal.number);
       } 
+      std::string dispatch(Unary& unary) override {
+        return "(-" + unary.left->accept(*this) + ")";
+      }
       std::string dispatch(Binary& binary) override {
         std::string op = "";
         switch(binary.op) {

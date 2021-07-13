@@ -47,14 +47,24 @@ namespace myc {
   }
 
   std::shared_ptr<Expr> Parser::factor() {
-    std::shared_ptr<Expr> left = primary();
+    std::shared_ptr<Expr> left = unary();
     while (match(TokenType::MULTIPLY) || match(TokenType::DIVIDE)) {
       Token token = previous();
-      std::shared_ptr<Expr> right = primary();
+      std::shared_ptr<Expr> right = unary();
       left = std::make_shared<Binary>(token.m_type, left, right); 
     }
 
     return left;
+  }
+
+  std::shared_ptr<Expr> Parser::unary() {
+    if (match(TokenType::MINUS)) {
+      Token token = previous();       
+      std::shared_ptr<Expr> left = unary();
+      return std::make_shared<Unary>(token.m_type, left);
+    } else {
+      return primary();
+    }
   }
 
   std::shared_ptr<Expr> Parser::primary() {

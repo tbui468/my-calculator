@@ -14,7 +14,11 @@ namespace myc {
         return compute(root->left) + compute(root->right);
         break;
       case TokenType::MINUS:
-        return compute(root->left) - compute(root->right);
+        if (root->right == nullptr) {
+          return -1 * compute(root->left);
+        }else{
+          return compute(root->left) - compute(root->right);
+        }
         break;
       case TokenType::MULTIPLY:
         return compute(root->left) * compute(root->right);

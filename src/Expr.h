@@ -8,13 +8,14 @@
 namespace myc {
 
 class Literal;
+class Unary;
 class Binary;
-class Group;
 
 class AbstractDispatcher {
   public:
     virtual ~AbstractDispatcher() {}
     virtual std::string dispatch(Literal& literal) = 0;
+    virtual std::string dispatch(Unary& unary) = 0;
     virtual std::string dispatch(Binary& binary) = 0;
 };
 
@@ -34,6 +35,15 @@ class Literal: public Expr {
   public:
     Literal(double number): Expr(number, TokenType::NUMBER, nullptr, nullptr) {}
     ~Literal() {}
+    std::string accept(AbstractDispatcher& dispatcher) override {
+      return dispatcher.dispatch(*this);
+    }
+};
+
+class Unary: public Expr {
+  public:
+    Unary(TokenType op, std::shared_ptr<Expr> left): Expr(0.0, op, left, nullptr) {}
+    ~Unary() {}
     std::string accept(AbstractDispatcher& dispatcher) override {
       return dispatcher.dispatch(*this);
     }
