@@ -11,10 +11,7 @@ namespace myc {
   }
 
   double Parser::compute(std::shared_ptr<Expr> root) {
-    switch (root->token.m_type) {
-      case TokenType::NUMBER:
-        return root->token.m_number;
-        break;
+    switch (root->op) {
       case TokenType::PLUS:
         return compute(root->left) + compute(root->right);
         break;
@@ -27,16 +24,16 @@ namespace myc {
       case TokenType::DIVIDE:
         return compute(root->left) / compute(root->right);
         break;
+      default:
+        return root->number;
+        break;
     }
   }
 
   std::shared_ptr<Expr> Parser::expression() {
     std::shared_ptr<Expr> left = term();
     while(has_tokens()) {
-      if (match(TokenType::RIGHT_PAREN)) {
-        return left;
-      }
-      left = term(left);
+      left = term(left); //is there a different way to solve this problem withou a term(left) function???
     }
     return left;
   }
@@ -46,19 +43,20 @@ namespace myc {
     if (match(TokenType::PLUS) || match(TokenType::MINUS)) {
       Token token = previous();
       std::shared_ptr<Expr> right = factor();
-      return std::make_shared<Binary>(token, left, right);
+      return std::make_shared<Binary>(token.m_type, left, right);
     }else{
       return left;
     }
   }
 
+  //this function is causing a lot of problems dispite solving one
   std::shared_ptr<Expr> Parser::term(std::shared_ptr<Expr> left) { //I don't like having this function here - can this be combined with term()?
     if (match(TokenType::PLUS) || match(TokenType::MINUS)) {
       Token token = previous();
       std::shared_ptr<Expr> right = factor();
-      return std::make_shared<Binary>(token, left, right);
+      return std::make_shared<Binary>(token.m_type, left, right);
     }else{
-      return left;
+      return left; //this needs to call factor() otherwise 1*2*3 will skip the last number!!!
     }
   }
 
@@ -67,7 +65,7 @@ namespace myc {
     if (match(TokenType::MULTIPLY) || match(TokenType::DIVIDE)) {
       Token token = previous();
       std::shared_ptr<Expr> right = primary();
-      return std::make_shared<Binary>(token, left, right);
+      return std::make_shared<Binary>(token.m_type, left, right); 
     }else{
       return left;
     }
@@ -75,12 +73,19 @@ namespace myc {
 
   std::shared_ptr<Expr> Parser::primary() {
     if (match(TokenType::NUMBER)) {
-      return std::make_shared<Literal>(previous());
-    } else if (match(TokenType::LEFT_PAREN)) {
-      return expression();
-    }else{
-      std::cout << "Invalid syntax" << std::endl;
+      return std::make_shared<Literal>(previous().m_number);
     }
+
+    if (match(TokenType::LEFT_PAREN)) {
+      std::shared_ptr<Expr> expr = expression();
+      if (match(TokenType::RIGHT_PAREN)) {
+        return expr;
+      } else {
+        std::cout << "Failed to close parentheses" << std::endl;
+      }
+    }
+
+    std::cout << "Invalid syntax" << std::endl;
   }
 
   bool Parser::match(TokenType type) {
